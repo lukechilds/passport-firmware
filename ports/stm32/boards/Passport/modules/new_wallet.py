@@ -402,30 +402,21 @@ class NewWalletUX(UXStateMachine):
         else:
             self.goto(self.IMPORT_MULTISIG_CONFIG_FROM_MICROSD, save_curr=False)
 
-    def is_address_verification_skip_enabled(self):
+    def is_skip_address_verifivation_enabled(self):
         if 'skip_address_validation' in self.sw_wallet:
-            if self.sw_wallet['skip_address_validation'] == 'True':
-                return True
-            else:
-                return False
+            return self.sw_wallet['skip_address_validation']
         else:
             return False
 
     def is_skip_multisig_import_enabled(self):
         if 'skip_multisig_import' in self.sw_wallet:
-            if self.sw_wallet['skip_multisig_import'] == 'True':
-                return True
-            else:
-                return False
+            return self.sw_wallet['skip_multisig_import']
         else:
             return False
 
     def is_force_multisig_policy_enabled(self):
         if 'force_multisig_policy' in self.sw_wallet:
-            if self.sw_wallet['force_multisig_policy'] == 'True':
-                return True
-            else:
-                return False
+            return self.sw_wallet['force_multisig_policy']
         else:
             return False
 
@@ -580,16 +571,14 @@ class NewWalletUX(UXStateMachine):
                 # receive address from the wallet.
                 if self.is_multisig():
                     # Only perform multisig import if wallet does not prevent it
-                    if self.is_skip_multisig_import_enabled():
-                        continue
-                    else:
+                    if self.is_skip_multisig_import_enabled() == False:
                         self.choose_multisig_import_mode()
 
                 # Only perform address validation if wallet does not prevent it
-                if self.is_address_verification_skip_enabled():
+                if self.is_skip_address_verifivation_enabled():
                     if self.is_force_multisig_policy_enabled():
-                        result = await ux_show_story('For compatibility with {}, Passport will set your multisig policy to Skip Verification.\n{}'.format(self.sw_wallet['label']),
-                        left_btn='NEXT',
+                        result = await ux_show_story('For compatibility with {}, Passport will set your Multisig Policy to Skip Verification.\n'.format(self.sw_wallet['label']),
+                        left_btn='OK',
                         center=True,
                         center_vertically=True)
                         if result == 'x':
@@ -657,16 +646,14 @@ class NewWalletUX(UXStateMachine):
                 # receive address from the wallet.
                 if self.is_multisig():
                     # Only perform multisig import if wallet does not prevent it
-                    if self.is_skip_multisig_import_enabled():
-                        continue
-                    else:
+                    if self.is_skip_multisig_import_enabled() == False:
                         self.choose_multisig_import_mode()
 
                 # Only perform address validation if wallet does not prevent it
-                if self.is_address_verification_skip_enabled():
+                if self.is_skip_address_verifivation_enabled():
                     if self.is_force_multisig_policy_enabled():
-                        result = await ux_show_story('For compatibility with {}, Passport will set your multisig policy to Skip Verification.\n{}'.format(self.sw_wallet['label']),
-                        left_btn='NEXT',
+                        result = await ux_show_story('For compatibility with {}, Passport will set your multisig policy to Skip Verification.\n'.format(self.sw_wallet['label']),
+                        left_btn='OK',
                         center=True,
                         center_vertically=True)
                         if result == 'x':
@@ -914,7 +901,7 @@ Compare them with the addresses shown on the next screen to make sure they match
                         continue
 
                 if not self.verified:
-                    if self.is_address_verification_skip_enabled():
+                    if self.is_skip_address_verifivation_enabled():
                         if self.is_force_multisig_policy_enabled():
                             result = await ux_show_story('For compatibility with {}, Passport will set your multisig policy to Skip Verification.\n{}'.format(self.sw_wallet['label']),
                             left_btn='NEXT',
